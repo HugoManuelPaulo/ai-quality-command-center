@@ -53,7 +53,7 @@ python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
 pip install -r requirements.txt
 pytest -v
-python scripts/run_evaluation.py
+python -m scripts.run_evaluation
 uvicorn api.main:app --reload
 ```
 
@@ -96,7 +96,7 @@ Play online: **https://hugomanuelpaulo.github.io/ai-quality-command-center/arena
 Run the Python terminal version:
 
 ```bash
-python scripts/play_game.py
+python -m scripts.play_game
 ```
 
 Game API:
