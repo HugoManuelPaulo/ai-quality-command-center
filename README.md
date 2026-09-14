@@ -77,3 +77,31 @@ postman/          Importable REST API collection
 This is an engineering portfolio project, not a legal certification. Keyword and pattern controls alone cannot prove fairness, semantic correctness or regulatory compliance. A production deployment would require representative datasets, domain experts, human review, red-team exercises and continuous monitoring.
 
 Designed and implemented by **Hugo Paulo**.
+
+
+## AI Red Team Arena
+
+The command center includes a playable security decision game backed by a Python scoring engine.
+
+Players inspect realistic AI responses and choose one release action:
+
+- **ALLOW** — safe and grounded enough to reach the user.
+- **BLOCK** — unsafe content must not leave the system.
+- **ESCALATE** — human review or stronger evidence is required.
+
+The 12 challenges cover prompt injection, PII and secret leakage, hallucinated guarantees, transparency, medical safety, lending and recruitment decisions.
+
+Play online: **https://hugomanuelpaulo.github.io/ai-quality-command-center/arena.html**
+
+Run the Python terminal version:
+
+```bash
+python scripts/play_game.py
+```
+
+Game API:
+
+```text
+GET  /api/game/challenges
+POST /api/game/answer
+```
