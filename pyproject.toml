@@ -1,0 +1,14 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+  "api: API contract tests",
+  "evaluation: AI quality and safety evaluation tests",
+]
+
+[tool.coverage.run]
+source = ["ai_quality", "api"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
