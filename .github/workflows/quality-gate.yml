@@ -1,0 +1,42 @@
+name: AI Quality Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run automated tests
+        run: pytest -v --cov=ai_quality --cov=api --cov-report=term-missing --cov-report=xml --cov-fail-under=80 --html=reports/test-report.html --self-contained-html
+
+      - name: Execute AI release evaluation
+        run: python scripts/run_evaluation.py
+
+      - name: Upload auditable evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ai-quality-evidence
+          path: |
+            reports/
+            coverage.xml
+          if-no-files-found: error
