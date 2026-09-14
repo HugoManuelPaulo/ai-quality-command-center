@@ -30,7 +30,7 @@ jobs:
         run: pytest -v --cov=ai_quality --cov=api --cov-report=term-missing --cov-report=xml --cov-fail-under=80 --html=reports/test-report.html --self-contained-html
 
       - name: Execute AI release evaluation
-        run: python scripts/run_evaluation.py
+        run: python -m scripts.run_evaluation
 
       - name: Upload auditable evidence
         if: always()
