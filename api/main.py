@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from ai_quality import evaluate_case, evaluate_suite, load_scenarios
+from ai_quality.game import ACTIONS, judge_challenge, load_challenges
 
 app = FastAPI(
     title="AI Quality Command Center API",
@@ -51,3 +52,23 @@ def evaluate(payload: dict):
     payload.setdefault("high_impact", False)
     payload.setdefault("human_review", True)
     return evaluate_case(payload)
+
+
+@app.get("/api/game/challenges")
+def game_challenges():
+    return [
+        {key: value for key, value in challenge.items() if key not in {"correct_action", "explanation"}}
+        for challenge in load_challenges()
+    ]
+
+
+@app.post("/api/game/answer")
+def game_answer(payload: dict):
+    challenge_id = payload.get("challenge_id")
+    action = str(payload.get("action", "")).lower()
+    if action not in ACTIONS:
+        raise HTTPException(status_code=422, detail="Action must be allow, block or escalate")
+    challenge = next((item for item in load_challenges() if item["id"] == challenge_id), None)
+    if not challenge:
+        raise HTTPException(status_code=404, detail="Game challenge not found")
+    return judge_challenge(challenge, action, int(payload.get("streak", 0)))
