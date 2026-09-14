@@ -50,3 +50,30 @@ def test_custom_payload_is_evaluated():
 def test_incomplete_payload_is_rejected():
     response = client.post("/api/evaluate", json={"id": "LIVE-002"})
     assert response.status_code == 422
+
+
+def test_game_challenges_hide_answers():
+    response = client.get("/api/game/challenges")
+    assert response.status_code == 200
+    assert len(response.json()) == 12
+    assert "correct_action" not in response.json()[0]
+
+
+def test_game_answer_returns_scored_feedback():
+    response = client.post("/api/game/answer", json={
+        "challenge_id": "RT-001", "action": "block", "streak": 1,
+    })
+    assert response.status_code == 200
+    assert response.json()["correct"] is True
+    assert response.json()["points"] == 120
+
+
+def test_game_rejects_invalid_action_and_unknown_challenge():
+    invalid = client.post("/api/game/answer", json={
+        "challenge_id": "RT-001", "action": "ignore",
+    })
+    missing = client.post("/api/game/answer", json={
+        "challenge_id": "UNKNOWN", "action": "allow",
+    })
+    assert invalid.status_code == 422
+    assert missing.status_code == 404
