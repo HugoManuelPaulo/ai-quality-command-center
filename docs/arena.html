@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="AI Red Team Arena — a playable AI safety decision game by Hugo Paulo.">
+<title>AI Red Team Arena — Hugo Paulo</title>
+<style>
+:root{--bg:#07111f;--panel:#0d1b2d;--panel2:#13243a;--line:#29415e;--text:#f4f7fb;--muted:#9fb2c8;--cyan:#67e8df;--blue:#7ca7f7;--green:#8ce0b0;--amber:#ffd078;--red:#ff8585}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 5%,#1a3152 0,transparent 38%),var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.wrap{width:min(1100px,calc(100% - 32px));margin:auto}header{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-bottom:1px solid var(--line)}a{color:inherit;text-decoration:none}.brand{font-weight:900;font-size:20px}.brand span{color:var(--cyan)}.links{display:flex;gap:10px}.btn{border:1px solid var(--line);border-radius:10px;padding:11px 15px;background:var(--panel);color:var(--text);font-weight:800;cursor:pointer}.btn:hover{border-color:var(--cyan)}main{padding:55px 0 70px}
+.eyebrow{color:var(--cyan);font-size:12px;font-weight:900;letter-spacing:.15em;text-transform:uppercase}h1{font-size:clamp(38px,7vw,72px);line-height:1;margin:12px 0 18px;letter-spacing:-.055em}h1 em{font-style:normal;color:var(--blue)}.intro{max-width:760px;color:var(--muted);font-size:18px;margin:0 0 34px}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px}.stat strong{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.progress{height:5px;background:var(--panel2);border-radius:99px;overflow:hidden;margin-bottom:16px}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--blue));transition:width .3s}
+.arena{background:rgba(13,27,45,.96);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 30px 90px #0005}.arena-head{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}.badge{border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;text-transform:uppercase}.critical,.high{color:var(--red);background:#3b1c25}.medium{color:var(--amber);background:#3b301b}.low{color:var(--green);background:#14382c}
+.challenge{padding:28px}.challenge h2{font-size:clamp(25px,4vw,38px);line-height:1.1;margin:0 0 24px}.message{border:1px solid var(--line);background:#081522;border-radius:12px;padding:18px;margin:12px 0}.message b{display:block;color:var(--cyan);font-size:11px;letter-spacing:.12em;margin-bottom:7px}.message.ai b{color:var(--blue)}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 28px 28px}.action{min-height:58px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text);font-weight:900;font-size:15px;cursor:pointer}.action:hover{transform:translateY(-1px);border-color:var(--blue)}.action:disabled{opacity:.5;cursor:not-allowed}.action[data-action=allow]:hover{border-color:var(--green)}.action[data-action=block]:hover{border-color:var(--red)}.action[data-action=escalate]:hover{border-color:var(--amber)}
+.feedback{display:none;margin:0 28px 28px;padding:18px;border-radius:12px;border:1px solid var(--line)}.feedback.show{display:block}.feedback.good{background:#113326;border-color:#286b50}.feedback.bad{background:#381e24;border-color:#81404d}.feedback strong{display:block;font-size:18px;margin-bottom:5px}.feedback p{margin:0;color:#d5dfeb}.next{margin-top:14px;background:var(--blue);color:#07111f;border:0}
+.result{text-align:center;padding:45px 28px}.result h2{font-size:42px;margin:8px 0}.result .final-score{font-size:64px;font-weight:950;color:var(--cyan)}.result p{color:var(--muted)}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}.rule{padding:18px;border:1px solid var(--line);border-radius:12px;background:#0a1727}.rule b{display:block;margin-bottom:5px}.rule span{color:var(--muted);font-size:14px}
+footer{padding:28px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+@media(max-width:700px){.hud{grid-template-columns:repeat(2,1fr)}.actions,.rules{grid-template-columns:1fr}.links .optional{display:none}.challenge{padding:22px}.actions{padding:0 22px 22px}.feedback{margin:0 22px 22px}}
+</style>
+</head>
+<body><div class="wrap">
+<header><a class="brand" href="./">AI Quality <span>Command Center</span></a><nav class="links"><a class="btn optional" href="https://github.com/HugoManuelPaulo/ai-quality-command-center">Repository</a><a class="btn" href="./">Dashboard</a></nav></header>
+<main>
+<div class="eyebrow">Interactive Python project</div><h1>AI Red Team <em>Arena.</em></h1>
+<p class="intro">You are the release controller. Inspect each user prompt and AI response, then decide whether to allow it, block it, or escalate it for human review.</p>
+<section class="hud" aria-label="Game status">
+<div class="stat"><strong id="round">0/12</strong><span>Round</span></div><div class="stat"><strong id="score">0</strong><span>Score</span></div><div class="stat"><strong id="streak">0</strong><span>Streak</span></div><div class="stat"><strong id="accuracy">0%</strong><span>Accuracy</span></div>
+</section><div class="progress"><i id="bar"></i></div>
+<section class="arena" id="arena">
+<div class="arena-head"><span id="category">Loading scenario…</span><span class="badge low" id="severity">risk</span></div>
+<div class="challenge"><h2 id="title">Preparing the arena</h2><div class="message"><b>USER PROMPT</b><span id="prompt">Loading…</span></div><div class="message ai"><b>AI RESPONSE</b><span id="response">Loading…</span></div></div>
+<div class="actions" id="actions"><button class="action" data-action="allow">ALLOW</button><button class="action" data-action="block">BLOCK</button><button class="action" data-action="escalate">ESCALATE</button></div>
+<div class="feedback" id="feedback"><strong id="verdict"></strong><p id="explanation"></p><button class="btn next" id="next">Next challenge →</button></div>
+</section>
+<section class="rules"><div class="rule"><b>ALLOW</b><span>Safe and sufficiently grounded to reach the user.</span></div><div class="rule"><b>BLOCK</b><span>Unsafe content must not leave the system.</span></div><div class="rule"><b>ESCALATE</b><span>Human review or stronger evidence is required.</span></div></section>
+</main><footer>Built by Hugo Paulo · Python · FastAPI · PyTest · AI assurance</footer>
+</div>
+<script>
+let challenges=[],index=0,score=0,streak=0,correct=0,locked=false;
+const $=id=>document.getElementById(id);
+function show(){const c=challenges[index];locked=false;$('round').textContent=(index+1)+'/'+challenges.length;$('score').textContent=score;$('streak').textContent=streak;$('accuracy').textContent=(index?Math.round(100*correct/index):0)+'%';$('bar').style.width=(100*index/challenges.length)+'%';$('category').textContent=c.category.replace('_',' ')+' · '+c.control;$('severity').textContent=c.severity+' risk';$('severity').className='badge '+c.severity;$('title').textContent=c.title;$('prompt').textContent=c.prompt;$('response').textContent=c.response;$('feedback').className='feedback';document.querySelectorAll('.action').forEach(b=>b.disabled=false)}
+function answer(action){if(locked)return;locked=true;const c=challenges[index],ok=action===c.correct_action;if(ok){streak++;correct++;score+=100+Math.min(streak,5)*10}else streak=0;document.querySelectorAll('.action').forEach(b=>b.disabled=true);$('feedback').className='feedback show '+(ok?'good':'bad');$('verdict').textContent=ok?'Correct · +'+(100+Math.min(streak,5)*10):'Incorrect · correct decision: '+c.correct_action.toUpperCase();$('explanation').textContent=c.explanation;$('score').textContent=score;$('streak').textContent=streak;$('accuracy').textContent=Math.round(100*correct/(index+1))+'%'}
+function finish(){const accuracy=Math.round(100*correct/challenges.length),rank=accuracy>=90?'AI Guardian':accuracy>=70?'Risk Analyst':'Security Trainee';$('bar').style.width='100%';$('arena').innerHTML='<div class="result"><div class="eyebrow">Assessment complete</div><h2>'+rank+'</h2><div class="final-score">'+score+'</div><p>'+correct+'/'+challenges.length+' correct · '+accuracy+'% accuracy</p><button class="btn next" onclick="location.reload()">Play again ↻</button></div>'}
+document.querySelectorAll('.action').forEach(b=>b.onclick=()=>answer(b.dataset.action));$('next').onclick=()=>{index++;index<challenges.length?show():finish()};
+fetch('data/game-challenges.json').then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{challenges=data.sort(()=>Math.random()-.5);show()}).catch(()=>{$('title').textContent='The arena could not load';$('prompt').textContent='Refresh the page to try again.';$('response').textContent='Challenge data is temporarily unavailable.'});
+</script></body></html>
